@@ -17,11 +17,12 @@ async function run() {
 
     const token = core.getInput("token", { required: true });
     const url = core.getInput("target_url", { required: false }) || defaultUrl;
+    const environmentUrl = core.getInput("environment_url", { required: false }) || "";
     const description = core.getInput("description", { required: false }) || "";
     const deploymentId = core.getInput("deployment_id");
     const state = core.getInput("state") as DeploymentState;
 
-    const client = new github.GitHub(token);
+    const client = new github.GitHub(token, { previews: ["flash", "ant-man"] });
 
     await client.repos.createDeploymentStatus({
       ...context.repo,
@@ -29,6 +30,7 @@ async function run() {
       state,
       log_url: defaultUrl,
       target_url: url,
+      environment_url: environmentUrl,
       description
     });
   } catch (error) {
